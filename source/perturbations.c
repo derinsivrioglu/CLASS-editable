@@ -4045,6 +4045,7 @@ int perturbations_vector_init(
           break;
         case tam:
           class_define_index(ppv->index_pt_E2,_TRUE_,index_pt,ppv->l_max_pol_g-1); /* E_2^(0) */
+          class_define_index(ppv->index_pt_B2,_TRUE_,index_pt,ppv->l_max_pol_g-1); /* NDS - Added B_2^(0) */
           break;
 	}
       }
@@ -4807,6 +4808,7 @@ int perturbations_vector_init(
         case tam:
           /* first-order tight-coupling approximation */
           ppv->y[ppv->index_pt_E2] = -5.*_SQRT6_/8.*ppw->s_l[2]*ppv->y[ppv->index_pt_shear_g];
+          ppv->y[ppv->index_pt_B2] = 0.; /** NDS - Added B_2 */
           break;
         }
 
@@ -5005,6 +5007,8 @@ int perturbations_vector_init(
               for (l = 2; l <= ppw->pv->l_max_pol_g; l++) {
                 ppv->y[ppv->index_pt_E2+l-2] =
                   ppw->pv->y[ppw->pv->index_pt_E2+l-2];
+                ppv->y[ppv->index_pt_B2+l-2] =
+                  ppw->pv->y[ppw->pv->index_pt_B2+l-2]; /** NDS - Added B mode initial conditions */
               }
               break;
             }
@@ -5123,6 +5127,8 @@ int perturbations_vector_init(
               for (l = 2; l <= ppw->pv->l_max_pol_g; l++) {
                 ppv->y[ppv->index_pt_E2+l-2] =
                   ppw->pv->y[ppw->pv->index_pt_E2+l-2];
+                ppv->y[ppv->index_pt_B2+l-2] =
+                  ppw->pv->y[ppw->pv->index_pt_B2+l-2]; /** NDS - Added B2 initial conditions. */                  
               }
               break;
             }
@@ -5247,6 +5253,8 @@ int perturbations_vector_init(
               for (l = 2; l <= ppw->pv->l_max_pol_g; l++) {
                 ppv->y[ppv->index_pt_E2+l-2] =
                   ppw->pv->y[ppw->pv->index_pt_E2+l-2];
+                ppv->y[ppv->index_pt_B2+l-2] =
+                  ppw->pv->y[ppw->pv->index_pt_B2+l-2]; /** NDS - Added B2 */                  
               }
               break;
 	    }
@@ -5356,6 +5364,8 @@ int perturbations_vector_init(
               for (l = 2; l <= ppw->pv->l_max_pol_g; l++) {
                 ppv->y[ppv->index_pt_E2+l-2] =
                   ppw->pv->y[ppw->pv->index_pt_E2+l-2];
+                ppv->y[ppv->index_pt_B2+l-2] =
+                  ppw->pv->y[ppw->pv->index_pt_B2+l-2]; /** NDS - Added B */                  
               }
               break;
             }
@@ -10577,6 +10587,8 @@ int perturbations_derivs(double tau,
         case tam:
           dy[pv->index_pt_E2] = -twokappam[3]/7.*y[pv->index_pt_E2+1]
             -photon_scattering_rate*(y[pv->index_pt_E2] + _SQRT6_*P0);
+          dy[pv->index_pt_B2] = -twokappam[3]/7.*y[pv->index_pt_B2+1]
+            -photon_scattering_rate*(y[pv->index_pt_B2] ); /** NDS - Added the B mode l=2 hierarchical eqn.  */
           break;
         }
 
@@ -10599,6 +10611,9 @@ int perturbations_derivs(double tau,
             dy[pv->index_pt_E2+l-2] = twokappam[l]/(2.*l-1.)*y[pv->index_pt_E2+l-3]
 	      -twokappam[l+1]/(2.*l+3.)*y[pv->index_pt_E2+l-1]
               -photon_scattering_rate*y[pv->index_pt_E2+l-2];
+            dy[pv->index_pt_B2+l-2] = twokappam[l]/(2.*l-1.)*y[pv->index_pt_B2+l-3]
+	      -twokappam[l+1]/(2.*l+3.)*y[pv->index_pt_E2+l-1]
+              -photon_scattering_rate*y[pv->index_pt_B2+l-2]; /** NDS - Added the B mode l>3 hierarchical eqn.  */
           }
           break;
         }
@@ -10621,6 +10636,9 @@ int perturbations_derivs(double tau,
           dy[pv->index_pt_E2+l-2] = twokappam[l]*(2.*l+1.)/(2.*l-1.)/(l-2.)*y[pv->index_pt_E2+l-3]
                                      -(l+3.)*k*cotKgen*y[pv->index_pt_E2+l-2]
                                      -photon_scattering_rate*y[pv->index_pt_E2+l-2];
+         dy[pv->index_pt_B2+l-2] = twokappam[l]*(2.*l+1.)/(2.*l-1.)/(l-2.)*y[pv->index_pt_B2+l-3]
+                                     -(l+3.)*k*cotKgen*y[pv->index_pt_B2+l-2]
+                                     -photon_scattering_rate*y[pv->index_pt_B2+l-2]; /** NDS - Added the B mode closure eqns. */                                  
           break;
         }
       }
