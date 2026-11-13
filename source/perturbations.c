@@ -8257,6 +8257,14 @@ int perturbations_sources(
   /** - define local variables */
 
   double P;
+
+  /** NDS - define local variables for beta and x */
+  double beta=0;
+  double x;
+  double x0;
+  double sinc_x;
+  double sinc_x0;
+
   int index_tp;
 
   struct perturbations_parameters_and_workspace * pppaw;
@@ -8518,6 +8526,29 @@ int perturbations_sources(
     }
 
     /* scalar polarization */
+
+    /* NDS - Added beta rotation for E and B mode sources */
+    if ((pba->has_A == _TRUE_) && (pba->has_L == _TRUE_)) {
+      x = pba-> L * tau;
+      x0 = pba-> L * pba->conformal_age;
+      if (fabs(x) < 1.e-3) {
+        sinc_x = 1. - x*x/6. + x*x*x*x/120. - x*x*x*x*x*x/5040.;
+      }
+      else {
+        sinc_x = sin(x) / x;
+      }
+
+      if (fabs(x0) < 1.e-3) {
+        sinc_x0 = 1. - x0*x0/6. + x0*x0*x0*x0/120.
+              - x0*x0*x0*x0*x0*x0/5040.;
+      }
+      else {
+       sinc_x0 = sin(x0) / x0;
+      }
+
+      beta = pba->A * (sinc_x - sinc_x0);
+    }
+
     if (ppt->has_source_p == _TRUE_) {
 
       /* all gauges. Note that the correct formula for the E source
@@ -8525,7 +8556,7 @@ int perturbations_sources(
          plus sign to comply with the 'historical convention'
          established in CMBFAST and CAMB. */
 
-      _set_source_(ppt->index_tp_p) = _SQRT6_ * g * P;
+      _set_source_(ppt->index_tp_p) = _SQRT6_ * g * P * cos(2. * beta); /** NDS - modified the e source */
 
     }
 
@@ -8536,7 +8567,7 @@ int perturbations_sources(
          plus sign to comply with the 'historical convention'
          established in CMBFAST and CAMB. */
 
-      _set_source_(ppt->index_tp_pb) = _SQRT6_ * g * P;
+      _set_source_(ppt->index_tp_pb) = _SQRT6_ * g * P * sin(2. * beta);
 
     }
 
@@ -10042,7 +10073,8 @@ int perturbations_derivs(double tau,
 
   /* multipole */
   int l;
-
+  /* NDS - Initialize betadot */
+  double betadot=0.;
   /* scale factor and other background quantities */
   double a,a2,a_prime_over_a,R,R_Hu;
 
@@ -10589,6 +10621,21 @@ int perturbations_derivs(double tau,
           break;
         }
 
+        /** NDS - defining betadot */
+
+        if (pba-> has_A == _TRUE_ && pba-> has_L == _TRUE_ && pba->L != 0. && pba->A != 0.) {
+          if (fabs(pba->L * tau) < 1.e-3) {
+            double x = pba->L * tau;
+            betadot = pba->A * pba->L * pba->L * tau * (1./3. - x*x/30. + x*x*x*x/840.);
+          }
+          else {
+            betadot = - pba->A * (cos(pba->L * tau)/tau - sin(pba->L * tau)/(pba->L * tau * tau));
+          }
+        }
+        else {
+          betadot = 0.;
+        }
+
         /** - -----> photon polarization l=2, using (2.36) of 1305.3261 with l=2, m=0, G_1^(0), G_2^(0)=pol2_g, G_3^(0) (optimal)
             or using (34) of astro-ph/9709066 with l=2, m=0, E_2^(0), E_3^(0), B_2^(0), B_3^(0) (tam) */
 
@@ -10601,9 +10648,11 @@ int perturbations_derivs(double tau,
 
         case tam:
           dy[pv->index_pt_E2] = -twokappam[3]/7.*y[pv->index_pt_E2+1]
-            -photon_scattering_rate*(y[pv->index_pt_E2] + _SQRT6_*P0);
+            -photon_scattering_rate*(y[pv->index_pt_E2] + _SQRT6_*P0)
+            - 2. * betadot * y[pv->index_pt_B2]; /** NDS - Added polarization to the E l=2 mode  */
           dy[pv->index_pt_B2] = -twokappam[3]/7.*y[pv->index_pt_B2+1]
-            -photon_scattering_rate*(y[pv->index_pt_B2] ); /** NDS - Added the B mode l=2 hierarchical eqn.  */
+            -photon_scattering_rate*(y[pv->index_pt_B2])
+            + 2. * betadot * y[pv->index_pt_E2]; /** NDS - Added the B mode l=2 hierarchical eqn.  */
           break;
         }
 
@@ -10625,10 +10674,12 @@ int perturbations_derivs(double tau,
 
             dy[pv->index_pt_E2+l-2] = twokappam[l]/(2.*l-1.)*y[pv->index_pt_E2+l-3]
 	      -twokappam[l+1]/(2.*l+3.)*y[pv->index_pt_E2+l-1]
-              -photon_scattering_rate*y[pv->index_pt_E2+l-2];
+              -photon_scattering_rate*y[pv->index_pt_E2+l-2]
+              - 2. * betadot * y[pv->index_pt_B2+l-2]; /** NDS - Added polarization to the E l=2 mode  */
             dy[pv->index_pt_B2+l-2] = twokappam[l]/(2.*l-1.)*y[pv->index_pt_B2+l-3]
-	      -twokappam[l+1]/(2.*l+3.)*y[pv->index_pt_E2+l-1]
-              -photon_scattering_rate*y[pv->index_pt_B2+l-2]; /** NDS - Added the B mode l>3 hierarchical eqn.  */
+	      -twokappam[l+1]/(2.*l+3.)*y[pv->index_pt_B2+l-1]
+              -photon_scattering_rate*y[pv->index_pt_B2+l-2]
+              + 2. * betadot * y[pv->index_pt_E2+l-2]; /** NDS - Added the B mode l>3 hierarchical eqn.  */
           }
           break;
         }
@@ -10650,10 +10701,12 @@ int perturbations_derivs(double tau,
         case tam:
           dy[pv->index_pt_E2+l-2] = twokappam[l]*(2.*l+1.)/(2.*l-1.)/(l-2.)*y[pv->index_pt_E2+l-3]
                                      -(l+3.)*k*cotKgen*y[pv->index_pt_E2+l-2]
-                                     -photon_scattering_rate*y[pv->index_pt_E2+l-2];
+                                     -photon_scattering_rate*y[pv->index_pt_E2+l-2]
+                                     - 2. * betadot * y[pv->index_pt_B2+l-2]; /** NDS - Added polarization to the E l=2 mode  */
          dy[pv->index_pt_B2+l-2] = twokappam[l]*(2.*l+1.)/(2.*l-1.)/(l-2.)*y[pv->index_pt_B2+l-3]
                                      -(l+3.)*k*cotKgen*y[pv->index_pt_B2+l-2]
-                                     -photon_scattering_rate*y[pv->index_pt_B2+l-2]; /** NDS - Added the B mode closure eqns. */                                  
+                                     -photon_scattering_rate*y[pv->index_pt_B2+l-2]
+                                     + 2. * betadot * y[pv->index_pt_E2+l-2]; /** NDS - Added the B mode closure eqns. */                                  
           break;
         }
       }

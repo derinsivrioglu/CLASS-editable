@@ -146,6 +146,10 @@ struct background
   double z_eq;      /**< redshift at radiation/matter equality */
   double tau_eq;    /**< conformal time at radiation/matter equality [Mpc] */
 
+  double A; /**< NDS - amplitude of the varying fundamental constants */
+  double L; /**< NDS - frequency of the varying fundamental constants */
+  
+
   //@}
 
 
@@ -291,6 +295,9 @@ struct background
   short has_idr;       /**< presence of interacting dark radiation? */
   short has_curvature; /**< presence of global spatial curvature? */
   short has_varconst;  /**< presence of varying fundamental constants? */
+  short has_A;         /**< NDS - presence of A? */
+  short has_L;         /**< NDS - presence of L? */
+  
 
   //@}
 

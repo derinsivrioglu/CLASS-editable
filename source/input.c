@@ -2451,7 +2451,22 @@ int input_read_parameters_species(struct file_content * pfc,
 
 
   sigma_B = 2.*pow(_PI_,5.)*pow(_k_B_,4.)/15./pow(_h_P_,3.)/pow(_c_,2);  // [W/(m^2 K^4) = Kg/(K^4 s^3)]
-
+  
+  /** 9.c) NDS parameters */
+  class_call(parser_read_double(pfc,"A",&param1,&flag1,errmsg),
+           errmsg,
+           errmsg);
+  if (flag1 == _TRUE_) {
+    pba->A = param1;
+    pba->has_A = _TRUE_;
+  }
+  class_call(parser_read_double(pfc,"L",&param2,&flag2,errmsg),
+           errmsg,
+           errmsg);
+  if (flag2 == _TRUE_) {
+    pba->L = param2;
+    pba->has_L = _TRUE_;
+  }
   /** 1) Omega_0_g (photons) and T_cmb */
   /* Read */
   class_call(parser_read_double(pfc,"T_cmb",&param1,&flag1,errmsg),
@@ -3448,6 +3463,7 @@ int input_read_parameters_species(struct file_content * pfc,
     if ((fabs(scf_lambda) < 3.)&&(pba->background_verbose>1)){
       printf("'scf_lambda' = %e < 3 won't be tracking (for exp quint) unless overwritten by tuning function.",scf_lambda);
     }
+
   }
 
   return _SUCCESS_;
@@ -6052,6 +6068,12 @@ int input_default_params(struct background *pba,
   pba->phi_prime_ini_scf = 1;          //     factors of the radiation attractor values
   /** 9.b.3) Tuning parameter */
   pba->scf_tuning_index = 0;
+
+  /** 9.c) NDS parameters */
+  pba->has_A = _FALSE_;
+  pba->has_L = _FALSE_;
+  pba->A = 0.;
+  pba->L = 0.;
 
   /**
    * Deafult to input_read_parameters_heating
