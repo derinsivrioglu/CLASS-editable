@@ -329,13 +329,15 @@ cdef extern from "class.h":
         double phi_min
         double phi_max
         int lnk_size
-
+# NDS - Added has_eb, has_tb, index_ct_eb, and index_ct_tb
     cdef struct harmonic:
         short is_allocated
         ErrorMsg error_message
         int has_tt
         int has_te
         int has_ee
+        int has_eb
+        int has_tb
         int has_bb
         int has_pp
         int has_tp
@@ -356,6 +358,8 @@ cdef extern from "class.h":
         int index_ct_te
         int index_ct_ee
         int index_ct_bb
+        int index_ct_tb
+        int index_ct_eb
         int index_ct_pp
         int index_ct_tp
         int index_ct_dd

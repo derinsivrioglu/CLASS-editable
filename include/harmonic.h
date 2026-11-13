@@ -50,6 +50,8 @@ struct harmonic {
 
   int has_tt; /**< do we want \f$ C_l^{TT}\f$? (T = temperature) */
   int has_ee; /**< do we want \f$ C_l^{EE}\f$? (E = E-polarization) */
+  int has_eb; /**< NDS - do we want scalar induced \f$ C_l^{EB}\f$? */
+  int has_tb; /**< NDS - do we want scalar induced \f$ C_l^{EB}\f$? */
   int has_te; /**< do we want \f$ C_l^{TE}\f$? */
   int has_bb; /**< do we want \f$ C_l^{BB}\f$? (B = B-polarization) */
   int has_pp; /**< do we want \f$ C_l^{\phi\phi}\f$? (\f$ \phi \f$ = CMB lensing potential) */
@@ -75,6 +77,8 @@ struct harmonic {
   int index_ct_ll; /**< first index for type \f$ C_l^{ll} \f$((d_size*d_size-(d_size-non_diag)*(d_size-non_diag-1)/2) values) */
   int index_ct_tl; /**< first index for type \f$ C_l^{Tl} \f$(d_size values) */
   int index_ct_dl; /**< first index for type \f$ C_l^{dl} \f$(d_size values) */
+  int index_ct_eb; /** NDS - index for scalar EB */
+  int index_ct_tb; /** NDS - index for scalar TB */
 
   int d_size;      /**< number of bins for which density Cl's are computed */
 

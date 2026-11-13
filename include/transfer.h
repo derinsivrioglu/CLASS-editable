@@ -128,6 +128,7 @@ struct transfer {
   int index_tt_t1;      /**< index for transfer type = temperature (j=1 term) */
   int index_tt_t2;      /**< index for transfer type = temperature (j=2 term) for scalar, vector and tensor modes */
   int index_tt_e;       /**< index for transfer type = E-polarization (for scalar, vector and tensor modes) */
+  int index_tt_scalar_b; /**< NDS - index for transfer type = B-polarization for scalar modes */
   int index_tt_b;       /**< index for transfer type = B-polarization for tensor modes (m=2) */
   int index_tt_lcmb;    /**< index for transfer type = CMB lensing */
   int index_tt_density; /**< index for first bin of transfer type = matter density */

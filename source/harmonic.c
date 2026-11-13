@@ -453,8 +453,9 @@ int harmonic_indices(
       index_ct++;
     }
     else {
-      phr->has_bb = _FALSE_;
+      phr->has_bb = _FALSE_; 
     }
+
 
     /* types of C_l's relevant only for scalars: phi-phi, T-phi, E-phi, d-d, T-d */
 
@@ -485,6 +486,25 @@ int harmonic_indices(
     }
     else {
       phr->has_ep = _FALSE_;
+    }
+
+        if (ppt->has_cl_cmb_polarization == _TRUE_) { /** NDS - Allocated indices for EB */
+      phr->has_eb = _TRUE_;
+      phr->index_ct_eb=index_ct;
+      index_ct++;
+    }
+    else {
+      phr->has_eb = _FALSE_;
+    }
+
+    if ((ppt->has_cl_cmb_temperature == _TRUE_) && /** NDS - Allocated indices for TB */
+        (ppt->has_cl_cmb_polarization == _TRUE_)) {
+      phr->has_tb = _TRUE_;
+      phr->index_ct_tb=index_ct;
+      index_ct++;
+    }
+    else {
+      phr->has_tb = _FALSE_;
     }
 
     if ((ppt->has_scalars == _TRUE_) &&
@@ -585,6 +605,10 @@ int harmonic_indices(
       if (phr->has_pp == _TRUE_) phr->l_max_ct[ppt->index_md_scalars][phr->index_ct_pp] = ppt->l_scalar_max;
       if (phr->has_tp == _TRUE_) phr->l_max_ct[ppt->index_md_scalars][phr->index_ct_tp] = ppt->l_scalar_max;
       if (phr->has_ep == _TRUE_) phr->l_max_ct[ppt->index_md_scalars][phr->index_ct_ep] = ppt->l_scalar_max;
+      if (phr->has_bb == _TRUE_) phr->l_max_ct[ppt->index_md_scalars][phr->index_ct_bb] = ppt->l_scalar_max; /** NDS - added bb to scalar indices */
+      if (phr->has_eb == _TRUE_) phr->l_max_ct[ppt->index_md_scalars][phr->index_ct_eb] = ppt->l_scalar_max; /** NDS - added eb to scalar indices */
+      if (phr->has_tb == _TRUE_) phr->l_max_ct[ppt->index_md_scalars][phr->index_ct_tb] = ppt->l_scalar_max; /** NDS - added tb to scalar indices */
+
 
       /* spectra computed up to l_lss_max */
 
@@ -1104,6 +1128,29 @@ int harmonic_compute_cl(
                transfer_ic1[ptr->index_tt_e] * transfer_ic2_temp)
         * factor;
 
+    if (_scalars_ && (phr->has_bb == _TRUE_)) /** NDS - Added BB integrand */
+      cl_integrand[index_q*cl_integrand_num_columns+1+phr->index_ct_bb]=
+        primordial_pk[index_ic1_ic2]
+        * transfer_ic1[ptr->index_tt_scalar_b]
+        * transfer_ic2[ptr->index_tt_scalar_b]
+        * factor;
+
+    if (_scalars_ && (phr->has_eb == _TRUE_)) /** NDS - Added BB integrand */
+      cl_integrand[index_q*cl_integrand_num_columns+1+phr->index_ct_eb]=
+        primordial_pk[index_ic1_ic2]
+        * 0.5*(transfer_ic1[ptr->index_tt_e] * transfer_ic2[ptr->index_tt_scalar_b] +
+               transfer_ic1[ptr->index_tt_scalar_b] * transfer_ic2[ptr->index_tt_e])
+        * factor;
+
+    if (_scalars_ && (phr->has_tb == _TRUE_)) /** NDS - Added TB integrand */
+      cl_integrand[index_q*cl_integrand_num_columns+1+phr->index_ct_tb]=
+        primordial_pk[index_ic1_ic2]
+        * 0.5*(transfer_ic1_temp * transfer_ic2[ptr->index_tt_scalar_b] +
+               transfer_ic1[ptr->index_tt_scalar_b] * transfer_ic2_temp)
+        * factor;
+
+       
+
     if (_vectors_ && (phr->has_bb == _TRUE_))
       cl_integrand[index_q*cl_integrand_num_columns+1+phr->index_ct_bb]=
         primordial_pk[index_ic1_ic2]
@@ -1269,8 +1316,8 @@ int harmonic_compute_cl(
        vector and tensor modes to lensing and galaxy density/number
        count */
 
-    if ((_scalars_ && (phr->has_bb == _TRUE_) && (index_ct == phr->index_ct_bb)) ||
-        (_tensors_ && (phr->has_pp == _TRUE_) && (index_ct == phr->index_ct_pp)) ||
+    /* if ((_scalars_ && (phr->has_bb == _TRUE_) && (index_ct == phr->index_ct_bb)) ||*/
+    if ((_tensors_ && (phr->has_pp == _TRUE_) && (index_ct == phr->index_ct_pp)) ||
         (_tensors_ && (phr->has_tp == _TRUE_) && (index_ct == phr->index_ct_tp)) ||
         (_tensors_ && (phr->has_ep == _TRUE_) && (index_ct == phr->index_ct_ep)) ||
         (_tensors_ && (phr->has_dd == _TRUE_) && (index_ct == phr->index_ct_dd)) ||

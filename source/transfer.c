@@ -530,6 +530,8 @@ int transfer_indices(
     class_define_index(ptr->index_tt_nc_g4,  ppt->has_nc_gr,                   index_tt,ppt->selection_num);
     class_define_index(ptr->index_tt_nc_g5,  ppt->has_nc_gr,                   index_tt,ppt->selection_num);
     class_define_index(ptr->index_tt_lensing,ppt->has_cl_lensing_potential,    index_tt,ppt->selection_num);
+    class_define_index(ptr->index_tt_scalar_b,ppt->has_cl_cmb_polarization,    index_tt,1); /** NDS - Added B mode transfer type for scalar perturbations */
+    
 
     ptr->tt_size[ppt->index_md_scalars]=index_tt;
 
@@ -968,6 +970,9 @@ int transfer_get_l_list(
           l_max=ppt->l_scalar_max;
 
         if ((ppt->has_cl_cmb_polarization == _TRUE_) && (index_tt == ptr->index_tt_e))
+          l_max=ppt->l_scalar_max;
+
+        if ((ppt->has_cl_cmb_polarization == _TRUE_) && (index_tt == ptr->index_tt_scalar_b)) /** NDS - added B */
           l_max=ppt->l_scalar_max;
 
         if ((ppt->has_cl_cmb_lensing_potential == _TRUE_) && (index_tt == ptr->index_tt_lcmb))
@@ -1529,6 +1534,9 @@ int transfer_get_source_correspondence(
         if ((ppt->has_cl_cmb_polarization == _TRUE_) && (index_tt == ptr->index_tt_e))
           tp_of_tt[index_md][index_tt]=ppt->index_tp_p;
 
+        if ((ppt->has_cl_cmb_polarization == _TRUE_) && (index_tt == ptr->index_tt_scalar_b)) /** NDS - Added the correspondance for B */
+          tp_of_tt[index_md][index_tt]=ppt->index_tp_pb;
+
         if ((ppt->has_cl_cmb_lensing_potential == _TRUE_) && (index_tt == ptr->index_tt_lcmb))
           tp_of_tt[index_md][index_tt]=ppt->index_tp_phi_plus_psi;
 
@@ -1718,6 +1726,8 @@ int transfer_source_tau_size(
 
     /* scalar polarization */
     if ((ppt->has_cl_cmb_polarization == _TRUE_) && (index_tt == ptr->index_tt_e))
+      *tau_size = ppt->tau_size;
+    if ((ppt->has_cl_cmb_polarization == _TRUE_) && (index_tt == ptr->index_tt_scalar_b)) /** NDS - Added B */
       *tau_size = ppt->tau_size;
 
     /* cmb lensing potential */
@@ -4470,6 +4480,9 @@ int transfer_select_radial_function(
         *radial_type = SCALAR_POLARISATION_E;
       }
 
+      if (index_tt == ptr->index_tt_scalar_b) { /** NDS - Added B mode radial function decleration */
+        *radial_type = SCALAR_POLARISATION_E;
+      }
     }
 
     if (_index_tt_in_range_(ptr->index_tt_d1,      ppt->selection_num, ppt->has_nc_rsd))

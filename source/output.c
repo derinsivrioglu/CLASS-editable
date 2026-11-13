@@ -1762,10 +1762,13 @@ int output_open_cl_file(
       class_fprintf_columntitle(*clfile,"TT",phr->has_tt,colnum);
       class_fprintf_columntitle(*clfile,"EE",phr->has_ee,colnum);
       class_fprintf_columntitle(*clfile,"TE",phr->has_te,colnum);
-      class_fprintf_columntitle(*clfile,"BB",phr->has_bb,colnum);
+      class_fprintf_columntitle(*clfile,"BB",phr->has_bb,colnum);     
       class_fprintf_columntitle(*clfile,"phiphi",phr->has_pp,colnum);
       class_fprintf_columntitle(*clfile,"TPhi",phr->has_tp,colnum);
       class_fprintf_columntitle(*clfile,"Ephi",phr->has_ep,colnum);
+ 
+      class_fprintf_columntitle(*clfile,"EB",phr->has_eb,colnum); /* NDS added EB */
+      class_fprintf_columntitle(*clfile,"TB",phr->has_tb,colnum); /* NDS added TB */     
     }
     else if (pop->output_format == camb_format) {
       class_fprintf_columntitle(*clfile,"TT",phr->has_tt,colnum);
@@ -1775,6 +1778,9 @@ int output_open_cl_file(
       class_fprintf_columntitle(*clfile,"dd",phr->has_pp,colnum);
       class_fprintf_columntitle(*clfile,"dT",phr->has_tp,colnum);
       class_fprintf_columntitle(*clfile,"dE",phr->has_ep,colnum);
+
+      class_fprintf_columntitle(*clfile,"EB",phr->has_eb,colnum); /* NDS added EB */
+      class_fprintf_columntitle(*clfile,"TB",phr->has_tb,colnum);     
     }
 
     /** - Next deal with entries that are independent of format type */

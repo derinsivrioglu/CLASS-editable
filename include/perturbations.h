@@ -278,6 +278,7 @@ struct perturbations
 
   short has_source_t;          /**< do we need source for CMB temperature? */
   short has_source_p;          /**< do we need source for CMB polarization? */
+  short has_source_pb;         /**< NDS - do we need source for B mode CMB polarization? */
   short has_source_delta_m;    /**< do we need source for delta of total matter? */
   short has_source_delta_cb;   /**< do we ALSO need source for delta of ONLY cdm and baryon? */
   short has_source_delta_tot;  /**< do we need source for delta total? */
@@ -330,6 +331,7 @@ struct perturbations
   int index_tp_vector_t1; /**< index value for temperature (j=1 term) for vector mode (m=1) */
   int index_tp_t2; /**< index value for temperature (j=2 term), common index for m=0,1,2 */
   int index_tp_p; /**< index value for polarization */
+  int index_tp_pb; /**< NDS - index value for B mode polarization */
   int index_tp_delta_m; /**< index value for matter density fluctuation */
   int index_tp_delta_cb; /**< index value for delta cb */
   int index_tp_delta_tot; /**< index value for total density fluctuation */

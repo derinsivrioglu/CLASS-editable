@@ -780,13 +780,16 @@ cdef class Class:
         # Define a list of integers, refering to the flags and indices of each
         # possible output Cl. It allows for a clear and concise way of looping
         # over them, checking if they are defined or not.
+        # NDS - added flags for eb and tb.
         has_flags = [
             (self.hr.has_tt, self.hr.index_ct_tt, 'tt'),
             (self.hr.has_ee, self.hr.index_ct_ee, 'ee'),
             (self.hr.has_te, self.hr.index_ct_te, 'te'),
             (self.hr.has_bb, self.hr.index_ct_bb, 'bb'),
             (self.hr.has_pp, self.hr.index_ct_pp, 'pp'),
-            (self.hr.has_tp, self.hr.index_ct_tp, 'tp'),]
+            (self.hr.has_tp, self.hr.index_ct_tp, 'tp'),
+            (self.hr.has_eb, self.hr.index_ct_eb, 'eb'),
+            (self.hr.has_tb, self.hr.index_ct_tb, 'tb'),]
         spectra = []
 
         for flag, index, name in has_flags:

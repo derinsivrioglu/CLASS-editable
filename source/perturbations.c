@@ -1289,6 +1289,7 @@ int perturbations_indices(
 
   ppt->has_source_t = _FALSE_;
   ppt->has_source_p = _FALSE_;
+  ppt->has_source_pb = _FALSE_; /** NDS - Added B mode source flag */
   ppt->has_source_delta_m = _FALSE_;
   ppt->has_source_delta_cb = _FALSE_;
   ppt->has_source_delta_tot = _FALSE_;
@@ -1347,6 +1348,7 @@ int perturbations_indices(
 
   if (ppt->has_cl_cmb_polarization == _TRUE_) {
     ppt->has_source_p = _TRUE_;
+    ppt->has_source_pb = _TRUE_; /** NDS - Added B mode source flag setting TRUE */
     ppt->has_cmb = _TRUE_;
   }
 
@@ -1381,6 +1383,8 @@ int perturbations_indices(
     if (_scalars_) {
 
       /** - --> source flags and indices, for sources that are specific to scalars */
+    
+      class_define_index(ppt->index_tp_pb,ppt->has_source_pb,index_type,1); /** NDS - Added B mode source flag for scalar perturbations */
 
       if ((ppt->has_cl_cmb_lensing_potential == _TRUE_) || (ppt->has_cl_lensing_potential)) {
         ppt->has_lss = _TRUE_;
@@ -8522,6 +8526,17 @@ int perturbations_sources(
          established in CMBFAST and CAMB. */
 
       _set_source_(ppt->index_tp_p) = _SQRT6_ * g * P;
+
+    }
+
+    if (ppt->has_source_pb == _TRUE_) { /** NDS - Added B mode source */
+
+      /* all gauges. Note that the correct formula for the E source
+         should have a minus sign, as shown in Hu & White. We put a
+         plus sign to comply with the 'historical convention'
+         established in CMBFAST and CAMB. */
+
+      _set_source_(ppt->index_tp_pb) = _SQRT6_ * g * P;
 
     }
 
